@@ -1,5 +1,5 @@
-import {useRef, useState} from 'react';
-import {Animated, Easing, I18nManager} from 'react-native';
+import { useRef, useState } from 'react';
+import { Animated, Easing, I18nManager } from 'react-native';
 import moment from 'moment-jalaali';
 
 const m = moment();
@@ -30,34 +30,34 @@ const jalaaliConfigs = {
   timeClose: 'بستن',
 };
 const gregorianConfigs = {
-  dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  dayNamesShort: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+  dayNames: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+  dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
   monthNames: [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    'Tháng Giêng',
+    'Tháng Hai',
+    'Tháng Ba',
+    'Tháng Tư',
+    'Tháng Năm',
+    'Tháng Sáu',
+    'Tháng Bảy',
+    'Tháng Tám',
+    'Tháng Chín',
+    'Tháng Mười',
+    'Tháng Mười Một',
+    'Tháng Mười Hai',
   ],
   selectedFormat: 'YYYY/MM/DD',
   dateFormat: 'YYYY/MM/DD',
   monthYearFormat: 'YYYY MM',
   timeFormat: 'HH:mm',
-  hour: 'Hour',
-  minute: 'Minute',
-  timeSelect: 'Select',
-  timeClose: 'Close',
+  hour: 'Giờ',
+  minute: 'Phút',
+  timeSelect: 'Chọn',
+  timeClose: 'Đóng',
 };
 
 class utils {
-  constructor({minimumDate, maximumDate, isGregorian, mode, reverse, configs}) {
+  constructor({ minimumDate, maximumDate, isGregorian, mode, reverse, configs }) {
     this.data = {
       minimumDate,
       maximumDate,
@@ -65,14 +65,14 @@ class utils {
       reverse: reverse === 'unset' ? !isGregorian : reverse,
     };
     this.config = isGregorian ? gregorianConfigs : jalaaliConfigs;
-    this.config = {...this.config, ...configs};
+    this.config = { ...this.config, ...configs };
     if (mode === 'time' || mode === 'datepicker') {
       this.config.selectedFormat = this.config.dateFormat + ' ' + this.config.timeFormat;
     }
   }
 
   get flexDirection() {
-    return {flexDirection: this.data.reverse ? (I18nManager.isRTL ? 'row' : 'row-reverse') : 'row'};
+    return { flexDirection: this.data.reverse ? (I18nManager.isRTL ? 'row' : 'row-reverse') : 'row' };
   }
 
   getFormated = (date, formatName = 'selectedFormat') => date.format(this.config[formatName]);
@@ -86,12 +86,12 @@ class utils {
   getMonthName = month => this.config.monthNames[month];
 
   toPersianNumber = value => {
-    const {isGregorian} = this.data;
+    const { isGregorian } = this.data;
     return isGregorian
       ? this.toEnglish(String(value))
       : String(value).replace(/[0-9]/g, w =>
-          String.fromCharCode(w.charCodeAt(0) + '۰'.charCodeAt(0) - 48),
-        );
+        String.fromCharCode(w.charCodeAt(0) + '۰'.charCodeAt(0) - 48),
+      );
   };
 
   toEnglish = value => {
@@ -102,7 +102,7 @@ class utils {
   getDate = time => moment(time, this.config.selectedFormat);
 
   getMonthYearText = time => {
-    const {isGregorian} = this.data;
+    const { isGregorian } = this.data;
     const date = this.getDate(time);
     const year = this.toPersianNumber(isGregorian ? date.year() : date.jYear());
     const month = this.getMonthName(isGregorian ? date.month() : date.jMonth());
@@ -110,7 +110,7 @@ class utils {
   };
 
   checkMonthDisabled = time => {
-    const {minimumDate, maximumDate, isGregorian} = this.data;
+    const { minimumDate, maximumDate, isGregorian } = this.data;
     const date = this.getDate(time);
     let disabled = false;
     if (minimumDate) {
@@ -125,7 +125,7 @@ class utils {
   };
 
   checkArrowMonthDisabled = (time, next) => {
-    const {isGregorian} = this.data;
+    const { isGregorian } = this.data;
     const date = this.getDate(time);
     return this.checkMonthDisabled(
       this.getFormated(date.add(next ? -1 : 1, isGregorian ? 'month' : 'jMonth')),
@@ -133,7 +133,7 @@ class utils {
   };
 
   checkYearDisabled = (year, next) => {
-    const {minimumDate, maximumDate, isGregorian} = this.data;
+    const { minimumDate, maximumDate, isGregorian } = this.data;
     const y = isGregorian
       ? this.getDate(next ? maximumDate : minimumDate).year()
       : this.getDate(next ? maximumDate : minimumDate).jYear();
@@ -141,14 +141,14 @@ class utils {
   };
 
   checkSelectMonthDisabled = (time, month) => {
-    const {isGregorian} = this.data;
+    const { isGregorian } = this.data;
     const date = this.getDate(time);
     const dateWithNewMonth = isGregorian ? date.month(month) : date.jMonth(month);
     return this.checkMonthDisabled(this.getFormated(dateWithNewMonth));
   };
 
   validYear = (time, year) => {
-    const {minimumDate, maximumDate, isGregorian} = this.data;
+    const { minimumDate, maximumDate, isGregorian } = this.data;
     const date = isGregorian ? this.getDate(time).year(year) : this.getDate(time).jYear(year);
     let validDate = this.getFormated(date);
     if (minimumDate && date < this.getDate(minimumDate)) {
@@ -161,7 +161,7 @@ class utils {
   };
 
   getMonthDays = time => {
-    const {minimumDate, maximumDate, isGregorian} = this.data;
+    const { minimumDate, maximumDate, isGregorian } = this.data;
     const date = this.getDate(time);
     const currentMonthDays = isGregorian
       ? date.daysInMonth()
@@ -234,8 +234,8 @@ class utils {
       ],
     };
 
-    return [{lastDate, shownAnimation, hiddenAnimation}, changeMonthAnimation];
+    return [{ lastDate, shownAnimation, hiddenAnimation }, changeMonthAnimation];
   };
 }
 
-export {utils};
+export { utils };
